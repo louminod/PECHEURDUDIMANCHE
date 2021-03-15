@@ -40,6 +40,7 @@ public class Station {
     private LocalDate dateMajInfos;
 
     private List<Chronique> chroniqueList;
+    private List<EnvironmentalCondition> environmentalConditionList;
 
     public Station(JSONObject json) throws JSONException {
         this.codeStation = json.getString("code_station");
@@ -320,5 +321,13 @@ public class Station {
 
     public void setDateMajInfos(LocalDate dateMajInfos) {
         this.dateMajInfos = dateMajInfos;
+    }
+
+    public List<EnvironmentalCondition> getEnvironmentalConditionList() {
+        return environmentalConditionList;
+    }
+
+    public void setEnvironmentalConditionList(List<EnvironmentalCondition> environmentalConditionList) {
+        this.environmentalConditionList = environmentalConditionList;
     }
 }

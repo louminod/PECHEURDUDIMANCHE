@@ -15,30 +15,22 @@ import java.util.List;
 
 public abstract class WaterTempApi {
     public static List<Station> stationsForDepartment(String department) {
-        List<Station> stationList = new ArrayList<>();
+        List<Station> stations = new ArrayList<>();
         try {
             WaterTempApiStationsTask stationsTask = new WaterTempApiStationsTask();
-            JSONArray stations = stationsTask.execute(department).get().getJSONArray("data");
-
-            for (int i = 0; i < stations.length(); i++) {
-                JSONObject jsonStation = stations.getJSONObject(i);
-                Station station = new Station(jsonStation);
-
-                WaterTempApiChroniqueTask chroniqueTask = new WaterTempApiChroniqueTask();
-                JSONArray chroniques = chroniqueTask.execute(station.getCodeStation()).get().getJSONArray("data");
-                List<Chronique> chroniqueList = new ArrayList<>();
-
-                for (int j = 0; j < chroniques.length(); j++) {
-                    JSONObject jsonChronique = chroniques.getJSONObject(i);
-                    chroniqueList.add(new Chronique(jsonChronique));
-                }
-
-                station.setChroniqueList(chroniqueList);
-                stationList.add(station);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            stations = stationsTask.execute(department).get();
+        } catch (Exception exception) {
+            Log.e("stationsForDepartment", exception.getMessage());
         }
-        return stationList;
+        return stations;
+    }
+
+    public static void fetchStationChronique(Station station) {
+        try {
+            WaterTempApiChroniqueTask chroniqueTask = new WaterTempApiChroniqueTask();
+            station.setChroniqueList(chroniqueTask.execute(station.getCodeStation()).get());
+        } catch (Exception exception) {
+            Log.e("fetchStationChronique", exception.getMessage());
+        }
     }
 }
