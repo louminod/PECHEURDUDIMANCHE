@@ -42,6 +42,7 @@ public class Station {
     private List<Chronique> chroniqueList;
     private List<EnvironmentalCondition> environmentalConditionList;
     private List<HydrometryObservation> hydrometryObservationList;
+    private List<FishState> fishStateList;
 
     public Station(JSONObject json) throws JSONException {
         this.codeStation = json.getString("code_station");
@@ -98,6 +99,14 @@ public class Station {
 
     public void setHydrometryObservationList(List<HydrometryObservation> hydrometryObservationList) {
         this.hydrometryObservationList = hydrometryObservationList;
+    }
+
+    public List<FishState> getFishStateList() {
+        return fishStateList;
+    }
+
+    public void setFishStateList(List<FishState> fishStateList) {
+        this.fishStateList = fishStateList;
     }
 
     public String getCodeStation() {

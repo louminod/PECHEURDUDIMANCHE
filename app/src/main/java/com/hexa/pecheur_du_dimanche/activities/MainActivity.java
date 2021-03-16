@@ -4,18 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 
 import com.hexa.pecheur_du_dimanche.R;
+import com.hexa.pecheur_du_dimanche.api.fishState.WaterFishStateApi;
 import com.hexa.pecheur_du_dimanche.api.hydrometry.WaterHydrometryApi;
-import com.hexa.pecheur_du_dimanche.api.hydrometry.tasks.WaterHydrometryObservationsTask;
 import com.hexa.pecheur_du_dimanche.api.waterQuality.WaterQualityApi;
 import com.hexa.pecheur_du_dimanche.api.waterTemp.WaterTempApi;
-import com.hexa.pecheur_du_dimanche.api.waterTemp.tasks.WaterTempApiStationsTask;
 import com.hexa.pecheur_du_dimanche.models.Station;
-
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -38,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
             WaterTempApi.fetchStationChronique(station);
             WaterQualityApi.fetchStationEnvironmentalCondition(station);
             WaterHydrometryApi.fetchStationHydrometry(station);
+            WaterFishStateApi.fetchStationFishState(station);
             Log.i("MAIN", String.format("Station %s filled", station.getCodeStation()));
         };
     }
