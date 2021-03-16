@@ -22,7 +22,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button buttonTest = findViewById(R.id.buttonTest);
+        getSupportActionBar().hide();
+
+        Button buttonTest = findViewById(R.id.buttonGo);
         buttonTest.setOnClickListener(value -> {
             List<Station> stationList = WaterTempApi.stationsForDepartment("94");
             stationList.forEach(station -> new Thread(apiFetch(station)).start());
