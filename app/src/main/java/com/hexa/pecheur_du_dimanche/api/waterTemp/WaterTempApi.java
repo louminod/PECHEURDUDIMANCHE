@@ -4,11 +4,8 @@ import android.util.Log;
 
 import com.hexa.pecheur_du_dimanche.api.waterTemp.tasks.WaterTempApiChroniqueTask;
 import com.hexa.pecheur_du_dimanche.api.waterTemp.tasks.WaterTempApiStationsTask;
-import com.hexa.pecheur_du_dimanche.models.Chronique;
 import com.hexa.pecheur_du_dimanche.models.Station;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;

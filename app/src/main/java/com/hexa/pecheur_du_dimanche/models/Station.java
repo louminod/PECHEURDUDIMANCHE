@@ -41,6 +41,7 @@ public class Station {
 
     private List<Chronique> chroniqueList;
     private List<EnvironmentalCondition> environmentalConditionList;
+    private List<HydrometryObservation> hydrometryObservationList;
 
     public Station(JSONObject json) throws JSONException {
         this.codeStation = json.getString("code_station");
@@ -81,6 +82,22 @@ public class Station {
 
     public void setChroniqueList(List<Chronique> chroniqueList) {
         this.chroniqueList = chroniqueList;
+    }
+
+    public List<EnvironmentalCondition> getEnvironmentalConditionList() {
+        return environmentalConditionList;
+    }
+
+    public void setEnvironmentalConditionList(List<EnvironmentalCondition> environmentalConditionList) {
+        this.environmentalConditionList = environmentalConditionList;
+    }
+
+    public List<HydrometryObservation> getHydrometryObservationList() {
+        return hydrometryObservationList;
+    }
+
+    public void setHydrometryObservationList(List<HydrometryObservation> hydrometryObservationList) {
+        this.hydrometryObservationList = hydrometryObservationList;
     }
 
     public String getCodeStation() {
@@ -321,13 +338,5 @@ public class Station {
 
     public void setDateMajInfos(LocalDate dateMajInfos) {
         this.dateMajInfos = dateMajInfos;
-    }
-
-    public List<EnvironmentalCondition> getEnvironmentalConditionList() {
-        return environmentalConditionList;
-    }
-
-    public void setEnvironmentalConditionList(List<EnvironmentalCondition> environmentalConditionList) {
-        this.environmentalConditionList = environmentalConditionList;
     }
 }
