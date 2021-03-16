@@ -2,6 +2,7 @@ package com.hexa.pecheur_du_dimanche.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -24,10 +25,9 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().hide();
 
-        Button buttonTest = findViewById(R.id.buttonGo);
-        buttonTest.setOnClickListener(value -> {
-            List<Station> stationList = WaterTempApi.stationsForDepartment("94");
-            stationList.forEach(station -> new Thread(apiFetch(station)).start());
+        Button buttonGo = findViewById(R.id.buttonGo);
+        buttonGo.setOnClickListener(value -> {
+
         });
     }
 
