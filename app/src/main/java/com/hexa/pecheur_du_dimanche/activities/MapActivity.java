@@ -18,20 +18,27 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.hexa.pecheur_du_dimanche.R;
+import com.hexa.pecheur_du_dimanche.api.fishState.WaterFishStateApi;
+import com.hexa.pecheur_du_dimanche.api.hydrometry.WaterHydrometryApi;
 import com.hexa.pecheur_du_dimanche.api.localisation.APIAdresse;
+import com.hexa.pecheur_du_dimanche.api.waterQuality.WaterQualityApi;
+import com.hexa.pecheur_du_dimanche.api.waterTemp.WaterTempApi;
+import com.hexa.pecheur_du_dimanche.api.waterTemp.tasks.WaterTempApiStationsTask;
 import com.hexa.pecheur_du_dimanche.models.Adresse;
+import com.hexa.pecheur_du_dimanche.models.Station;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import java.util.List;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -41,6 +48,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Location currentLocation;
     private boolean firstTimeFlag = true;
     private Adresse currentAddress;
+    private List<Station> stations;
 
     private final View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
@@ -62,9 +70,35 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 animateCamera(currentLocation);
                 firstTimeFlag = false;
             }
-            showMarker(currentLocation);
+            showMarker(currentLocation.getLatitude(), currentLocation.getLongitude(), "Vous !");
+
+            if (currentAddress != null) {
+                stations = WaterTempApi.stationsForDepartment(currentAddress.getPostcode().substring(0, 2));
+                //stations = WaterTempApi.stations();
+            }
+
+            stations.forEach(station -> {
+                showMarker(station.getLatitude(), station.getLongitude(), "");
+            });
+
+            //WaterTempApi.stationsForDepartment(currentAddress.getPostcode().substring(0,2));
         }
     };
+
+    private void showMarker(double latitude, double longitude, String title) {
+        LatLng latLng = new LatLng(latitude, longitude);
+        googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng).title(title));
+    }
+
+    private Runnable apiFetch(Station station) {
+        return () -> {
+            WaterTempApi.fetchStationChronique(station);
+            WaterQualityApi.fetchStationEnvironmentalCondition(station);
+            WaterHydrometryApi.fetchStationHydrometry(station);
+            WaterFishStateApi.fetchStationFishState(station);
+            Log.i("MAIN", String.format("Station %s filled", station.getCodeStation()));
+        };
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,11 +159,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @NonNull
     private CameraPosition getCameraPositionWithBearing(LatLng latLng) {
         return new CameraPosition.Builder().target(latLng).zoom(16).build();
-    }
-
-    private void showMarker(@NonNull Location currentLocation) {
-        LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng));
     }
 
     @Override

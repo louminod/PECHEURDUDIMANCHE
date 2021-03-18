@@ -16,16 +16,16 @@ public class Adresse {
     private String street;
 
     public Adresse(JSONObject json) throws JSONException {
-        this.label = json.getString("label");
-        this.housenumber = json.getString("housenumber");
-        this.name = json.getString("name");
-        this.postcode = json.getString("postcode");
-        this.citycode = json.getString("citycode");
-        this.x = json.getString("x");
-        this.y = json.getString("y");
-        this.city = json.getString("city");
-        this.context = json.getString("context");
-        this.street = json.getString("street");
+        this.label = json.isNull("label") ? null : json.getString("label");
+        this.housenumber = json.isNull("housenumber") ? null : json.getString("housenumber");
+        this.name = json.isNull("name") ? null : json.getString("name");
+        this.postcode = json.isNull("postcode") ? null : json.getString("postcode");
+        this.citycode = json.isNull("citycode") ? null : json.getString("citycode");
+        this.x = json.isNull("x") ? null : json.getString("x");
+        this.y = json.isNull("y") ? null : json.getString("y");
+        this.city = json.isNull("city") ? null : json.getString("city");
+        this.context = json.isNull("context") ? null : json.getString("context");
+        this.street = json.isNull("street") ? null : json.getString("street");
     }
 
     public String getLabel() {

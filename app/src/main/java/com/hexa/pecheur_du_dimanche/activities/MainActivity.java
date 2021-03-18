@@ -30,14 +30,4 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, MapActivity.class))
         );
     }
-
-    private Runnable apiFetch(Station station) {
-        return () -> {
-            WaterTempApi.fetchStationChronique(station);
-            WaterQualityApi.fetchStationEnvironmentalCondition(station);
-            WaterHydrometryApi.fetchStationHydrometry(station);
-            WaterFishStateApi.fetchStationFishState(station);
-            Log.i("MAIN", String.format("Station %s filled", station.getCodeStation()));
-        };
-    }
 }

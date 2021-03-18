@@ -22,6 +22,17 @@ public abstract class WaterTempApi {
         return stations;
     }
 
+    public static List<Station> stations() {
+        List<Station> stations = new ArrayList<>();
+        try {
+            WaterTempApiStationsTask stationsTask = new WaterTempApiStationsTask();
+            stations = stationsTask.execute().get();
+        } catch (Exception exception) {
+            Log.e("stations", exception.getMessage());
+        }
+        return stations;
+    }
+
     public static void fetchStationChronique(Station station) {
         try {
             WaterTempApiChroniqueTask chroniqueTask = new WaterTempApiChroniqueTask();
