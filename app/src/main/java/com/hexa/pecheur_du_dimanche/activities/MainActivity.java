@@ -2,6 +2,7 @@ package com.hexa.pecheur_du_dimanche.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,13 +23,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         getSupportActionBar().hide();
 
         Button buttonGo = findViewById(R.id.buttonGo);
-        buttonGo.setOnClickListener(value -> {
-
-        });
+        buttonGo.setOnClickListener(value ->
+                startActivity(new Intent(MainActivity.this, MapActivity.class))
+        );
     }
 
     private Runnable apiFetch(Station station) {
