@@ -18,6 +18,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.hexa.pecheur_du_dimanche.R;
 import com.hexa.pecheur_du_dimanche.api.fishState.WaterFishStateApi;
@@ -25,12 +26,13 @@ import com.hexa.pecheur_du_dimanche.api.hydrometry.WaterHydrometryApi;
 import com.hexa.pecheur_du_dimanche.api.localisation.APIAdresse;
 import com.hexa.pecheur_du_dimanche.api.waterQuality.WaterQualityApi;
 import com.hexa.pecheur_du_dimanche.api.waterTemp.WaterTempApi;
-import com.hexa.pecheur_du_dimanche.api.waterTemp.tasks.WaterTempApiStationsTask;
 import com.hexa.pecheur_du_dimanche.models.Adresse;
 import com.hexa.pecheur_du_dimanche.models.Station;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
@@ -70,7 +72,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 animateCamera(currentLocation);
                 firstTimeFlag = false;
             }
-            showMarker(currentLocation.getLatitude(), currentLocation.getLongitude(), "Vous !");
+            showLocationMarker(currentLocation.getLatitude(), currentLocation.getLongitude(), "C'est vous !");
 
             if (currentAddress != null) {
                 stations = WaterTempApi.stationsForDepartment(currentAddress.getPostcode().substring(0, 2));
@@ -78,16 +80,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
 
             stations.forEach(station -> {
-                showMarker(station.getLatitude(), station.getLongitude(), "");
+                showStationMarker(station);
             });
-
-            //WaterTempApi.stationsForDepartment(currentAddress.getPostcode().substring(0,2));
         }
     };
 
-    private void showMarker(double latitude, double longitude, String title) {
+    private void showLocationMarker(double latitude, double longitude, String title) {
+        BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.fisher);
+        Bitmap icon = Bitmap.createScaledBitmap(bitmapdraw.getBitmap(), 150, 150, false);
+
         LatLng latLng = new LatLng(latitude, longitude);
-        googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng).title(title));
+        googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng).title(title).icon(BitmapDescriptorFactory.fromBitmap(icon)));
+    }
+
+    private void showStationMarker(Station station) {
+        BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.station);
+        Bitmap icon = Bitmap.createScaledBitmap(bitmapdraw.getBitmap(), 150, 150, false);
+
+        LatLng latLng = new LatLng(station.getLatitude(), station.getLongitude());
+        googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng).title(station.getLibelleCommune()).icon(BitmapDescriptorFactory.fromBitmap(icon)));
     }
 
     private Runnable apiFetch(Station station) {
@@ -113,6 +124,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
+        this.googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                // on marker click we are getting the title of our marker
+                // which is clicked and displaying it in a toast message.
+                String markerId = marker.getId();
+
+                Toast.makeText(MapActivity.this, "Clicked location is " + markerId, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
     }
 
     private void startCurrentLocationUpdates() {
