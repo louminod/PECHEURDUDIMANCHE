@@ -30,6 +30,7 @@ import com.hexa.pecheur_du_dimanche.models.Adresse;
 import com.hexa.pecheur_du_dimanche.models.Station;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -53,6 +54,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Location currentLocation;
     private boolean firstTimeFlag = true;
     private Adresse currentAddress;
+    private Context context;
 
     public static List<Station> stations;
     public static HashMap<String, String> markerMap = new HashMap<String, String>();
@@ -79,15 +81,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
             showLocationMarker(currentLocation.getLatitude(), currentLocation.getLongitude());
 
-            if (currentAddress != null) {
-                MapActivity.stations = WaterTempApi.stationsForDepartment(currentAddress.getPostcode().substring(0, 2));
-                // MapActivity.stations = WaterTempApi.stations();
-            }
+            if (currentAddress != null && MapActivity.stations == null) {
+                // MapActivity.stations = WaterTempApi.stationsForDepartment(currentAddress.getPostcode().substring(0, 2));
+                new Thread(() -> {
+                    runOnUiThread(() -> Toast.makeText(context, "Chargement des stations...", Toast.LENGTH_LONG).show());
+                    MapActivity.stations = WaterTempApi.stations();
+                    runOnUiThread(() -> Toast.makeText(context, "Chargement terminé", Toast.LENGTH_SHORT).show());
 
-            MapActivity.stations.forEach(station -> {
-                new Thread(apiFetch(station)).start();
-                showStationMarker(station);
-            });
+                    MapActivity.stations.forEach(station -> {
+                        // new Thread(apiFetch(station)).start();
+                        runOnUiThread(() -> showStationMarker(station));
+                    });
+                }).start();
+            }
         }
     };
 
@@ -126,6 +132,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
         supportMapFragment.getMapAsync(this);
         findViewById(R.id.currentLocationImageButton).setOnClickListener(clickListener);
+        this.context = MapActivity.this;
     }
 
     @Override
@@ -139,7 +146,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 String markerId = markerMap.get(marker.getId());
                 if (!markerId.equals("C'est vous !")) {
                     Station station = findStationByCode(markerId);
-                    Toast.makeText(MapActivity.this, station.getLibelleCommune(), Toast.LENGTH_SHORT).show();
                 }
                 return false;
             }
