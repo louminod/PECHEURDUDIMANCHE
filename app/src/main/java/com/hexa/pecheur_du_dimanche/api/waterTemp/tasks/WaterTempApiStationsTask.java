@@ -28,7 +28,6 @@ public class WaterTempApiStationsTask extends AsyncTask<String, Void, List<Stati
         try {
             // Make the connection and open the stream
             URL url = new URL(Constants.WATER_TEMP_STATIONS_URL + (params != null && params.length > 0 ? "?code_departement=" + params[0] : ""));
-            Log.i("URL", url.toString());
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 

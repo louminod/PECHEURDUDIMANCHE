@@ -5,8 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.hexa.pecheur_du_dimanche.R;
 import com.hexa.pecheur_du_dimanche.models.Station;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 public class StationActivity extends AppCompatActivity {
 
@@ -17,6 +21,13 @@ public class StationActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         Station station = (Station) getIntent().getSerializableExtra("station");
-        Log.i("INFO", station.getCodeStation());
+
+        TextView city = findViewById(R.id.stationCity);
+        ImageButton saveButton = findViewById(R.id.saveButton);
+        ImageButton backButton = findViewById(R.id.backButton);
+
+        city.setText(station.getLibelleCommune());
+
+        backButton.setOnClickListener(value -> finish());
     }
 }
