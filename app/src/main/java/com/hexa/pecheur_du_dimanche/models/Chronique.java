@@ -3,10 +3,11 @@ package com.hexa.pecheur_du_dimanche.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Chronique {
+public class Chronique implements Serializable {
     private LocalDateTime dateHeureMesure;
     private double resultat;
     private String codeUnite;

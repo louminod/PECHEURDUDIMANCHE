@@ -150,6 +150,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 String stationCode = markerMap.get(marker.getId());
                 Station station = findStationByCode(stationCode);
+                Intent intent = new Intent(MapActivity.this, StationActivity.class);
+                intent.putExtra("station", station);
+                startActivity(intent);
             }
         });
     }

@@ -3,10 +3,11 @@ package com.hexa.pecheur_du_dimanche.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class FishState {
+public class FishState implements Serializable {
     private LocalDate dateOperation;
     private String codeEspecePoisson;
     private String nomPoisson;

@@ -5,11 +5,12 @@ import android.icu.util.LocaleData;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class EnvironmentalCondition {
+public class EnvironmentalCondition implements Serializable {
     private LocalDate datePrelevement;
     private String resultat;
     private String codeRemarque;

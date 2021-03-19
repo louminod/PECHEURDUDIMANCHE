@@ -3,7 +3,9 @@ package com.hexa.pecheur_du_dimanche.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Adresse {
+import java.io.Serializable;
+
+public class Adresse implements Serializable {
     private String label;
     private String housenumber;
     private String name;

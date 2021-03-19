@@ -3,11 +3,12 @@ package com.hexa.pecheur_du_dimanche.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Station {
+public class Station implements Serializable {
     private String codeStation;
     private String libelleStation;
     private String uriStation;
