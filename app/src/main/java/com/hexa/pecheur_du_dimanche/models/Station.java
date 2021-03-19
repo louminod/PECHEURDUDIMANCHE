@@ -74,7 +74,10 @@ public class Station implements Serializable {
         this.libelleBassin = json.getString("libelle_bassin");
         this.uriBassin = json.getString("uri_bassin");
         this.pk = json.getString("pk");
-        this.altitude = json.getDouble("altitude");
+        if (!json.isNull("altitude")) {
+            this.altitude = json.getDouble("altitude");
+        }
+
         this.dateMajInfos = LocalDate.parse(json.getString("date_maj_infos"));
     }
 
