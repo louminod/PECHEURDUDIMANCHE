@@ -43,14 +43,18 @@ public class CustomInfo implements GoogleMap.InfoWindowAdapter {
             city.setText(station.getLibelleCommune());
             waterName.setText(station.getLibelleCoursEau());
             height.setText(String.format("altitude: %.1f m", station.getAltitude()));
-            if (station.getChroniqueList() != null) {
+            if (station.getChroniqueList() != null && station.getChroniqueList().size() > 0) {
                 waterTemp.setText(String.format("eau: %.1f °C", station.getChroniqueList().get(0).getResultat()));
+            } else {
+                waterTemp.setText("eau: chargement...");
             }
-            if (station.getEnvironmentalConditionList() != null) {
-                waterQuality.setText(String.format("qualité eau: %s",station.getEnvironmentalConditionList().get(0).getLibelleQualification()));
+            if (station.getEnvironmentalConditionList() != null && station.getEnvironmentalConditionList().size() > 0) {
+                waterQuality.setText(String.format("qualité eau: %s", station.getEnvironmentalConditionList().get(0).getLibelleQualification()));
+            } else {
+                waterQuality.setText("qualité eau: chargement...");
             }
         } else {
-            if(stationCode.equals("C'est vous !")) {
+            if (stationCode.equals("C'est vous !")) {
                 city.setText(stationCode);
             } else {
                 city.setText("Chargement...");

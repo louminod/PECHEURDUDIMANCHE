@@ -81,7 +81,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             if (currentAddress != null) {
                 MapActivity.stations = WaterTempApi.stationsForDepartment(currentAddress.getPostcode().substring(0, 2));
-                // stations = WaterTempApi.stations();
+                // MapActivity.stations = WaterTempApi.stations();
             }
 
             MapActivity.stations.forEach(station -> {
