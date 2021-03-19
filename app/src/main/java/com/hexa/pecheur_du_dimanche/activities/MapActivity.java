@@ -30,6 +30,7 @@ import com.hexa.pecheur_du_dimanche.models.Adresse;
 import com.hexa.pecheur_du_dimanche.models.Station;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -40,6 +41,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -50,7 +53,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Location currentLocation;
     private boolean firstTimeFlag = true;
     private Adresse currentAddress;
-    private List<Station> stations;
+
+    public static List<Station> stations;
+    public static HashMap<String, String> markerMap = new HashMap<String, String>();
 
     private final View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
@@ -72,25 +77,27 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 animateCamera(currentLocation);
                 firstTimeFlag = false;
             }
-            showLocationMarker(currentLocation.getLatitude(), currentLocation.getLongitude(), "C'est vous !");
+            showLocationMarker(currentLocation.getLatitude(), currentLocation.getLongitude());
 
             if (currentAddress != null) {
-                stations = WaterTempApi.stationsForDepartment(currentAddress.getPostcode().substring(0, 2));
-                //stations = WaterTempApi.stations();
+                MapActivity.stations = WaterTempApi.stationsForDepartment(currentAddress.getPostcode().substring(0, 2));
+                // stations = WaterTempApi.stations();
             }
 
-            stations.forEach(station -> {
+            MapActivity.stations.forEach(station -> {
+                new Thread(apiFetch(station)).start();
                 showStationMarker(station);
             });
         }
     };
 
-    private void showLocationMarker(double latitude, double longitude, String title) {
+    private void showLocationMarker(double latitude, double longitude) {
         BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.fisher);
         Bitmap icon = Bitmap.createScaledBitmap(bitmapdraw.getBitmap(), 150, 150, false);
 
         LatLng latLng = new LatLng(latitude, longitude);
-        googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng).title(title).icon(BitmapDescriptorFactory.fromBitmap(icon)));
+        String id = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng).title("C'est vous !").icon(BitmapDescriptorFactory.fromBitmap(icon))).getId();
+        markerMap.put(id, "C'est vous !");
     }
 
     private void showStationMarker(Station station) {
@@ -98,7 +105,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Bitmap icon = Bitmap.createScaledBitmap(bitmapdraw.getBitmap(), 150, 150, false);
 
         LatLng latLng = new LatLng(station.getLatitude(), station.getLongitude());
-        googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng).title(station.getLibelleCommune()).icon(BitmapDescriptorFactory.fromBitmap(icon)));
+        String id = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng).title(station.getCodeStation() + " - " + station.getLibelleCommune()).icon(BitmapDescriptorFactory.fromBitmap(icon))).getId();
+        markerMap.put(id, station.getCodeStation());
     }
 
     private Runnable apiFetch(Station station) {
@@ -107,7 +115,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             WaterQualityApi.fetchStationEnvironmentalCondition(station);
             WaterHydrometryApi.fetchStationHydrometry(station);
             WaterFishStateApi.fetchStationFishState(station);
-            Log.i("MAIN", String.format("Station %s filled", station.getCodeStation()));
         };
     }
 
@@ -124,15 +131,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
+        CustomInfo customInfo = new CustomInfo(this);
+        this.googleMap.setInfoWindowAdapter(customInfo);
         this.googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                // on marker click we are getting the title of our marker
-                // which is clicked and displaying it in a toast message.
-                String markerId = marker.getId();
-
-                Toast.makeText(MapActivity.this, "Clicked location is " + markerId, Toast.LENGTH_SHORT).show();
+                String markerId = markerMap.get(marker.getId());
+                if (!markerId.equals("C'est vous !")) {
+                    Station station = findStationByCode(markerId);
+                    Toast.makeText(MapActivity.this, station.getLibelleCommune(), Toast.LENGTH_SHORT).show();
+                }
                 return false;
+            }
+        });
+        this.googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+
+                String stationCode = markerMap.get(marker.getId());
+                Station station = findStationByCode(stationCode);
             }
         });
     }
@@ -204,5 +221,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onDestroy();
         fusedLocationProviderClient = null;
         googleMap = null;
+    }
+
+    private Station findStationByCode(String code) {
+        Station result = null;
+        for (Station station : MapActivity.stations) {
+            if (station.getCodeStation().equals(code)) {
+                result = station;
+            }
+        }
+        return result;
     }
 }

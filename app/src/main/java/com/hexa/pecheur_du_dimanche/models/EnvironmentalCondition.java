@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 
 public class EnvironmentalCondition {
     private LocalDate datePrelevement;
+    private String resultat;
     private String codeRemarque;
     private String mnemoRemarque;
     private String codeStatut;
@@ -27,6 +28,7 @@ public class EnvironmentalCondition {
         }
 
         this.codeRemarque = json.getString("code_remarque");
+        this.resultat = json.getString("resultat");
         this.mnemoRemarque = json.getString("mnemo_remarque");
         this.codeStatut = json.getString("code_statut");
         this.mnemoStatut = json.getString("mnemo_statut");
@@ -34,6 +36,14 @@ public class EnvironmentalCondition {
         this.libelleQualification = json.getString("libelle_qualification");
         this.commentaire = json.getString("commentaire");
         this.nomPreleveur = json.getString("nom_preleveur");
+    }
+
+    public String getResultat() {
+        return resultat;
+    }
+
+    public void setResultat(String resultat) {
+        this.resultat = resultat;
     }
 
     public LocalDate getDatePrelevement() {
