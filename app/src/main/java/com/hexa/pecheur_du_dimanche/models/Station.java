@@ -46,6 +46,7 @@ public class Station implements Serializable {
     private List<FishState> fishStateList;
 
     private boolean loaded;
+    private boolean favorite;
 
     public Station(JSONObject json) throws JSONException {
         this.codeStation = json.getString("code_station");
@@ -82,6 +83,7 @@ public class Station implements Serializable {
 
         this.dateMajInfos = LocalDate.parse(json.getString("date_maj_infos"));
         this.loaded = false;
+        this.favorite = false;
     }
 
     public boolean isLoaded() {
@@ -90,6 +92,14 @@ public class Station implements Serializable {
 
     public void setLoaded(boolean loaded) {
         this.loaded = loaded;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
     }
 
     public List<Chronique> getChroniqueList() {

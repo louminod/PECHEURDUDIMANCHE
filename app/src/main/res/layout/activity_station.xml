@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     android:orientation="vertical"
     tools:context=".activities.StationActivity">
 
@@ -28,6 +29,7 @@
             android:layout_height="50dp"
             android:gravity="center"
             android:text="TextView"
+            android:textColor="#202020"
             android:textSize="18sp" />
 
         <ImageButton
@@ -37,8 +39,7 @@
             android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:background="#FFFFFF"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/save_empty" />
+            android:scaleType="fitCenter" />
     </LinearLayout>
 
     <ListView

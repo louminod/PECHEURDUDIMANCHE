@@ -10,6 +10,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 import com.hexa.pecheur_du_dimanche.R;
 import com.hexa.pecheur_du_dimanche.activities.MapActivity;
+import com.hexa.pecheur_du_dimanche.api.fishState.WaterFishStateApi;
+import com.hexa.pecheur_du_dimanche.api.hydrometry.WaterHydrometryApi;
+import com.hexa.pecheur_du_dimanche.api.waterQuality.WaterQualityApi;
+import com.hexa.pecheur_du_dimanche.api.waterTemp.WaterTempApi;
 import com.hexa.pecheur_du_dimanche.models.Station;
 
 import java.util.HashMap;
@@ -41,6 +45,9 @@ public class CustomInfo implements GoogleMap.InfoWindowAdapter {
         Station station = findStationByCode(stationCode);
 
         if (station != null) {
+            WaterTempApi.fetchStationChronique(station);
+            WaterQualityApi.fetchStationEnvironmentalCondition(station);
+
             city.setText(station.getLibelleCommune());
             waterName.setText(station.getLibelleCoursEau());
             height.setText(String.format("altitude: %.1f m", station.getAltitude()));

@@ -47,6 +47,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -61,16 +62,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Context context;
 
     public static List<Station> stations;
-    public static HashMap<String, String> markerMap = new HashMap<String, String>();
-    public static boolean loadDone = false;
+    public static HashMap<String, String> markerMap;
+    public static boolean loadDone;
 
     private final LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-
-            Log.i("LOADED", String.valueOf(MapActivity.loadDone));
-
-            if(currentAddress == null) {
+            if (currentAddress == null) {
                 super.onLocationResult(locationResult);
                 locationResult.getLastLocation();
                 currentLocation = locationResult.getLastLocation();
@@ -82,20 +80,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 showLocationMarker(currentLocation.getLatitude(), currentLocation.getLongitude());
             }
 
-            if (currentAddress != null && !MapActivity.loadDone && (MapActivity.stations == null || MapActivity.stations.size() == 0)) {
+            if (currentAddress != null && !MapActivity.loadDone) {
                 // MapActivity.stations = WaterTempApi.stationsForDepartment(currentAddress.getPostcode().substring(0, 2));
                 new Thread(() -> {
-                    runOnUiThread(() -> Toast.makeText(context, "Chargement des stations...", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> Toast.makeText(context, "Chargement des stations...", Toast.LENGTH_LONG).show());
                     MapActivity.stations = WaterTempApi.stations();
                     runOnUiThread(() -> Toast.makeText(context, "Chargement terminé", Toast.LENGTH_SHORT).show());
 
                     String lastStationToLoad = MapActivity.stations.get(MapActivity.stations.size() - 1).getCodeStation();
 
                     MapActivity.stations.forEach(station -> {
-                        if(!station.isLoaded()) {
+                        if (!station.isLoaded()) {
                             new Thread(() -> {
-                                WaterTempApi.fetchStationChronique(station);
-                                WaterQualityApi.fetchStationEnvironmentalCondition(station);
+                                // WaterTempApi.fetchStationChronique(station);
+                                // WaterQualityApi.fetchStationEnvironmentalCondition(station);
                                 station.setLoaded(true);
                                 if (station.getCodeStation().equals(lastStationToLoad)) {
                                     MapActivity.loadDone = true;
@@ -130,6 +128,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        MapActivity.stations = new ArrayList<>();
+        MapActivity.markerMap = new HashMap<>();
+        MapActivity.loadDone = false;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         getSupportActionBar().hide();
