@@ -96,8 +96,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             new Thread(() -> {
                                 WaterTempApi.fetchStationChronique(station);
                                 WaterQualityApi.fetchStationEnvironmentalCondition(station);
-                                // WaterHydrometryApi.fetchStationHydrometry(station);
-                                // WaterFishStateApi.fetchStationFishState(station);
                                 station.setLoaded(true);
                                 if (station.getCodeStation().equals(lastStationToLoad)) {
                                     MapActivity.loadDone = true;
