@@ -45,6 +45,8 @@ public class Station implements Serializable {
     private List<HydrometryObservation> hydrometryObservationList;
     private List<FishState> fishStateList;
 
+    private boolean loaded;
+
     public Station(JSONObject json) throws JSONException {
         this.codeStation = json.getString("code_station");
         this.libelleStation = json.getString("libelle_station");
@@ -79,6 +81,15 @@ public class Station implements Serializable {
         }
 
         this.dateMajInfos = LocalDate.parse(json.getString("date_maj_infos"));
+        this.loaded = false;
+    }
+
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
     }
 
     public List<Chronique> getChroniqueList() {

@@ -40,7 +40,7 @@
             android:drawableRight="@drawable/search"
             android:drawableTintMode="add"
             android:ems="10"
-            android:hint="Departement"
+            android:hint="Département"
             android:inputType="number"
             android:maxLength="2" />
 

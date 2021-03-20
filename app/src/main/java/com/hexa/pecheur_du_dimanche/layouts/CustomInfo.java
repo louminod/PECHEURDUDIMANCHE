@@ -1,4 +1,4 @@
-package com.hexa.pecheur_du_dimanche.activities;
+package com.hexa.pecheur_du_dimanche.layouts;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 import com.hexa.pecheur_du_dimanche.R;
+import com.hexa.pecheur_du_dimanche.activities.MapActivity;
 import com.hexa.pecheur_du_dimanche.models.Station;
 
 import java.util.HashMap;

@@ -26,6 +26,7 @@ import com.hexa.pecheur_du_dimanche.api.hydrometry.WaterHydrometryApi;
 import com.hexa.pecheur_du_dimanche.api.localisation.APIAdresse;
 import com.hexa.pecheur_du_dimanche.api.waterQuality.WaterQualityApi;
 import com.hexa.pecheur_du_dimanche.api.waterTemp.WaterTempApi;
+import com.hexa.pecheur_du_dimanche.layouts.CustomInfo;
 import com.hexa.pecheur_du_dimanche.models.Adresse;
 import com.hexa.pecheur_du_dimanche.models.Station;
 
@@ -42,12 +43,10 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowInsets;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -63,30 +62,49 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     public static List<Station> stations;
     public static HashMap<String, String> markerMap = new HashMap<String, String>();
+    public static boolean loadDone = false;
 
     private final LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            super.onLocationResult(locationResult);
-            locationResult.getLastLocation();
-            currentLocation = locationResult.getLastLocation();
-            currentAddress = APIAdresse.reverseLocation(currentLocation);
-            if (firstTimeFlag && googleMap != null) {
-                animateCamera(currentLocation);
-                firstTimeFlag = false;
-            }
-            showLocationMarker(currentLocation.getLatitude(), currentLocation.getLongitude());
 
-            if (currentAddress != null && MapActivity.stations == null) {
+            Log.i("LOADED", String.valueOf(MapActivity.loadDone));
+
+            if(currentAddress == null) {
+                super.onLocationResult(locationResult);
+                locationResult.getLastLocation();
+                currentLocation = locationResult.getLastLocation();
+                currentAddress = APIAdresse.reverseLocation(currentLocation);
+                if (firstTimeFlag && googleMap != null) {
+                    animateCamera(currentLocation);
+                    firstTimeFlag = false;
+                }
+                showLocationMarker(currentLocation.getLatitude(), currentLocation.getLongitude());
+            }
+
+            if (currentAddress != null && !MapActivity.loadDone && (MapActivity.stations == null || MapActivity.stations.size() == 0)) {
                 // MapActivity.stations = WaterTempApi.stationsForDepartment(currentAddress.getPostcode().substring(0, 2));
                 new Thread(() -> {
                     runOnUiThread(() -> Toast.makeText(context, "Chargement des stations...", Toast.LENGTH_SHORT).show());
                     MapActivity.stations = WaterTempApi.stations();
                     runOnUiThread(() -> Toast.makeText(context, "Chargement terminé", Toast.LENGTH_SHORT).show());
 
+                    String lastStationToLoad = MapActivity.stations.get(MapActivity.stations.size() - 1).getCodeStation();
+
                     MapActivity.stations.forEach(station -> {
-                        // new Thread(apiFetch(station)).start();
-                        runOnUiThread(() -> showStationMarker(station));
+                        if(!station.isLoaded()) {
+                            new Thread(() -> {
+                                WaterTempApi.fetchStationChronique(station);
+                                WaterQualityApi.fetchStationEnvironmentalCondition(station);
+                                // WaterHydrometryApi.fetchStationHydrometry(station);
+                                // WaterFishStateApi.fetchStationFishState(station);
+                                station.setLoaded(true);
+                                if (station.getCodeStation().equals(lastStationToLoad)) {
+                                    MapActivity.loadDone = true;
+                                }
+                            }).start();
+                            runOnUiThread(() -> showStationMarker(station));
+                        }
                     });
                 }).start();
             }
@@ -109,15 +127,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         LatLng latLng = new LatLng(station.getLatitude(), station.getLongitude());
         String id = googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng).title(station.getCodeStation() + " - " + station.getLibelleCommune()).icon(BitmapDescriptorFactory.fromBitmap(icon))).getId();
         markerMap.put(id, station.getCodeStation());
-    }
-
-    private Runnable apiFetch(Station station) {
-        return () -> {
-            WaterTempApi.fetchStationChronique(station);
-            WaterQualityApi.fetchStationEnvironmentalCondition(station);
-            WaterHydrometryApi.fetchStationHydrometry(station);
-            WaterFishStateApi.fetchStationFishState(station);
-        };
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -190,12 +199,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         this.googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-
                 String stationCode = markerMap.get(marker.getId());
                 Station station = findStationByCode(stationCode);
-                Intent intent = new Intent(MapActivity.this, StationActivity.class);
-                intent.putExtra("station", station);
-                startActivity(intent);
+                if (station.isLoaded()) {
+                    Intent intent = new Intent(MapActivity.this, StationActivity.class);
+                    intent.putExtra("station", station);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(context, "La station n'a pas encore fini de charger", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
