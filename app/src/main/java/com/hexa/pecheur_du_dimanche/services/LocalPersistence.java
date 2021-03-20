@@ -85,7 +85,6 @@ public class LocalPersistence {
             FileInputStream fis = context.openFileInput(LocalPersistence.STATIONS_PATH);
             ObjectInputStream is = new ObjectInputStream(fis);
             stations = (List<Station>) is.readObject();
-            Log.i("------", String.valueOf(stations.size()));
             is.close();
             fis.close();
         } catch (FileNotFoundException e) {
