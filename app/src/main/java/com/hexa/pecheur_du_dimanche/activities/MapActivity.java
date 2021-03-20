@@ -30,6 +30,7 @@ import com.hexa.pecheur_du_dimanche.models.Adresse;
 import com.hexa.pecheur_du_dimanche.models.Station;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -39,7 +40,11 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowInsets;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -59,15 +64,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static List<Station> stations;
     public static HashMap<String, String> markerMap = new HashMap<String, String>();
 
-    private final View.OnClickListener clickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (view.getId() == R.id.currentLocationImageButton && googleMap != null && currentLocation != null) {
-                MapActivity.this.animateCamera(currentLocation);
-            }
-        }
-    };
-
     private final LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -84,7 +80,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             if (currentAddress != null && MapActivity.stations == null) {
                 // MapActivity.stations = WaterTempApi.stationsForDepartment(currentAddress.getPostcode().substring(0, 2));
                 new Thread(() -> {
-                    runOnUiThread(() -> Toast.makeText(context, "Chargement des stations...", Toast.LENGTH_LONG).show());
+                    runOnUiThread(() -> Toast.makeText(context, "Chargement des stations...", Toast.LENGTH_SHORT).show());
                     MapActivity.stations = WaterTempApi.stations();
                     runOnUiThread(() -> Toast.makeText(context, "Chargement terminé", Toast.LENGTH_SHORT).show());
 
@@ -124,6 +120,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         };
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,7 +128,46 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         getSupportActionBar().hide();
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
         supportMapFragment.getMapAsync(this);
-        findViewById(R.id.currentLocationImageButton).setOnClickListener(clickListener);
+
+        findViewById(R.id.currentLocationImageButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (view.getId() == R.id.currentLocationImageButton && googleMap != null && currentLocation != null) {
+                    MapActivity.this.animateCamera(currentLocation);
+                }
+            }
+        });
+
+        EditText etZip = findViewById(R.id.etZipCode);
+
+        etZip.setOnTouchListener((v, event) -> {
+            InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            final int DRAWABLE_RIGHT = 2;
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (etZip.getRight() - etZip.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    if (MapActivity.stations != null) {
+                        boolean founded = false;
+                        for (Station station : MapActivity.stations) {
+                            if (station.getCodeDepartement().equals(etZip.getText().toString())) {
+                                Location location = new Location("");
+                                location.setLatitude(station.getLatitude());
+                                location.setLongitude(station.getLongitude());
+                                MapActivity.this.animateCamera(location);
+                                founded = true;
+                                break;
+                            }
+                        }
+                        if (etZip.getText() != null && !founded) {
+                            Toast.makeText(context, "Aucune station pour ce département !", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    return true;
+                }
+            }
+            return false;
+        });
+
         this.context = MapActivity.this;
     }
 
@@ -146,6 +182,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 String markerId = markerMap.get(marker.getId());
                 if (!markerId.equals("C'est vous !")) {
                     Station station = findStationByCode(markerId);
+                    // DO NOTHING
                 }
                 return false;
             }
