@@ -24,7 +24,7 @@ public class WaterQualityApiEnvCondTask extends AsyncTask<String, Void, List<Env
         List<EnvironmentalCondition> environmentalConditionList = new ArrayList<>();
         try {
             // Make the connection and open the stream
-            URL url = new URL(Constants.WATER_QUALITY_ENV_PC_URL + "?code_station=" + params[0] + "&sort=desc&size=5");
+            URL url = new URL(Constants.WATER_QUALITY_ENV_PC_URL + "?code_station=" + params[0] + "&sort=desc&size=2");
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 

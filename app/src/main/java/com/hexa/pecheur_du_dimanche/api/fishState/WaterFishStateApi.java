@@ -10,6 +10,7 @@ public abstract class WaterFishStateApi {
         try {
             WaterFishStateTask waterFishStateTask = new WaterFishStateTask();
             station.setFishStateList(waterFishStateTask.execute(station.getCodeStation()).get());
+            Log.i("here", String.valueOf(station.getFishStateList().size()));
         } catch (Exception exception) {
             Log.e("fetchStationFishState", exception.getMessage());
         }

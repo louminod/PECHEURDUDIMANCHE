@@ -24,7 +24,7 @@ public class WaterTempApiChroniqueTask extends AsyncTask<String, Void, List<Chro
         List<Chronique> chroniqueList = new ArrayList<>();
         try {
             // Make the connection and open the stream
-            URL url = new URL(Constants.WATER_TEMP_CHRONIQUE_URL + "?code_station=" + params[0] + "&sort=desc&size=5");
+            URL url = new URL(Constants.WATER_TEMP_CHRONIQUE_URL + "?code_station=" + params[0] + "&sort=desc&size=2");
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 

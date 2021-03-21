@@ -21,6 +21,8 @@ public class EnvironmentalCondition implements Serializable {
     private String libelleQualification;
     private String commentaire;
     private String nomPreleveur;
+    private String codeUnite;
+    private String libelleUnite;
 
     public EnvironmentalCondition(JSONObject json) throws JSONException {
         if (!json.isNull("date_prelevement")) {
@@ -37,6 +39,24 @@ public class EnvironmentalCondition implements Serializable {
         this.libelleQualification = json.getString("libelle_qualification");
         this.commentaire = json.getString("commentaire");
         this.nomPreleveur = json.getString("nom_preleveur");
+        this.codeUnite = json.getString("code_unite");
+        this.libelleUnite = json.getString("symbole_unite");
+    }
+
+    public String getCodeUnite() {
+        return codeUnite;
+    }
+
+    public String getLibelleUnite() {
+        return libelleUnite;
+    }
+
+    public void setCodeUnite(String codeUnite) {
+        this.codeUnite = codeUnite;
+    }
+
+    public void setLibelleUnite(String libelleUnite) {
+        this.libelleUnite = libelleUnite;
     }
 
     public String getResultat() {
