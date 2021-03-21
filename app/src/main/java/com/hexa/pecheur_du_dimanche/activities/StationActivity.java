@@ -30,8 +30,12 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This activity display the information of a station.
+ */
 public class StationActivity extends AppCompatActivity {
 
+    // Attributes of the activity
     private Context context;
     private Station station;
 
@@ -39,16 +43,30 @@ public class StationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_station);
+
+        // Hide the actionBar
         getSupportActionBar().hide();
+
+        // Define the attributes
         this.context = StationActivity.this;
         this.station = (Station) getIntent().getSerializableExtra("station");
 
-        this.loadData();
+        // Check the persistence
         this.checkPersistence();
+
+        // Load the station data from the APIs
+        this.loadData();
+
+        // Load the custom navBar
         this.loadNavBar();
+
+        // Load the contence
         this.loadContent();
     }
 
+    /**
+     * Bind the elements from the view and display the information
+     */
     private void loadContent() {
         ((TextView) findViewById(R.id.tvDepartment)).setText(String.format("Département: %s", station.getLibelleDepartement()));
         ((TextView) findViewById(R.id.tvCoursEau)).setText(String.format("Cours d'eau: %s", station.getLibelleCoursEau()));
@@ -86,6 +104,9 @@ public class StationActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Fetch data from the APIs and fill the station with it.
+     */
     private void loadData() {
         WaterTempApi.fetchStationChronique(station);
         WaterQualityApi.fetchStationEnvironmentalCondition(station);
@@ -94,11 +115,16 @@ public class StationActivity extends AppCompatActivity {
         Toast.makeText(context, "Station loaded", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Load the custom navBar
+     */
     private void loadNavBar() {
         ((TextView) findViewById(R.id.stationCity)).setText(station.getLibelleCommune());
         findViewById(R.id.backButton).setOnClickListener(value -> finish());
 
         ImageButton saveButton = findViewById(R.id.saveButton);
+
+        // Check if the station is marked as a favorite and display a specific heart
         if (this.station.isFavorite()) {
             saveButton.setImageResource(R.drawable.save_full);
         } else {
@@ -106,6 +132,8 @@ public class StationActivity extends AppCompatActivity {
         }
         saveButton.setOnClickListener((event) -> {
             this.station.setFavorite(!this.station.isFavorite());
+
+            // Save or unsave the station and change the button image
             if (this.station.isFavorite()) {
                 LocalPersistence.saveStation(context, this.station);
                 saveButton.setImageResource(R.drawable.save_full);
@@ -116,9 +144,8 @@ public class StationActivity extends AppCompatActivity {
         });
     }
 
+    // Check if the station exist in the persistence and replace it
     private void checkPersistence() {
-        List<Station> stations = LocalPersistence.getStations(context);
-
         for (Station s : LocalPersistence.getStations(context)) {
             if (this.station.getCodeStation().equals(s.getCodeStation())) {
                 this.station = s;
