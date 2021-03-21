@@ -24,6 +24,11 @@ public class EnvironmentalCondition implements Serializable {
     private String codeUnite;
     private String libelleUnite;
 
+    /**
+     * Custom constructor converting a Json to this class object
+     * @param json
+     * @throws JSONException
+     */
     public EnvironmentalCondition(JSONObject json) throws JSONException {
         if (!json.isNull("date_prelevement")) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

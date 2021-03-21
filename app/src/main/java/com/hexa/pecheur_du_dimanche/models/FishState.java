@@ -16,6 +16,11 @@ public class FishState implements Serializable {
     private double densite;
     private double surfacePeche;
 
+    /**
+     * Custom constructor converting a Json to this class object
+     * @param json
+     * @throws JSONException
+     */
     public FishState(JSONObject json) throws JSONException {
         if (!json.isNull("date_operation")) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

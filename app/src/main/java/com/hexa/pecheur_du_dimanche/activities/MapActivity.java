@@ -18,16 +18,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.hexa.pecheur_du_dimanche.R;
-import com.hexa.pecheur_du_dimanche.api.fishState.WaterFishStateApi;
-import com.hexa.pecheur_du_dimanche.api.hydrometry.WaterHydrometryApi;
 import com.hexa.pecheur_du_dimanche.api.localisation.APIAdresse;
-import com.hexa.pecheur_du_dimanche.api.waterQuality.WaterQualityApi;
 import com.hexa.pecheur_du_dimanche.api.waterTemp.WaterTempApi;
 import com.hexa.pecheur_du_dimanche.layouts.CustomInfo;
-import com.hexa.pecheur_du_dimanche.models.Adresse;
+import com.hexa.pecheur_du_dimanche.models.Address;
 import com.hexa.pecheur_du_dimanche.models.Station;
 
 import android.Manifest;
@@ -40,7 +36,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -66,7 +61,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 5445;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Location currentLocation;
-    private Adresse currentAddress;
+    private Address currentAddress;
 
     // The application context
     private Context context;

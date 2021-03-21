@@ -15,6 +15,11 @@ public class Chronique implements Serializable {
     private String code_qualification;
     private String libelleQualification;
 
+    /**
+     * Custom constructor converting a Json to this class object
+     * @param json
+     * @throws JSONException
+     */
     public Chronique(JSONObject json) throws JSONException {
         if (!json.isNull("date_mesure_temp") && !json.isNull("heure_mesure_temp")) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

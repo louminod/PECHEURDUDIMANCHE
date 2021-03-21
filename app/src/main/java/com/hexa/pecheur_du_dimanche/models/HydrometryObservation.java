@@ -18,6 +18,11 @@ public class HydrometryObservation implements Serializable {
     private String codeQualificationObs;
     private String libelleQualificationObs;
 
+    /**
+     * Custom constructor converting a Json to this class object
+     * @param json
+     * @throws JSONException
+     */
     public HydrometryObservation(JSONObject json) throws JSONException {
         if (!json.isNull("date_obs")) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

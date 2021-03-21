@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class WaterTempApi {
+    /**
+     * Get all the stations for a specific department
+     * @param department
+     * @return
+     */
     public static List<Station> stationsForDepartment(String department) {
         List<Station> stations = new ArrayList<>();
         try {
@@ -22,6 +27,10 @@ public abstract class WaterTempApi {
         return stations;
     }
 
+    /**
+     * Get all the stations
+     * @return
+     */
     public static List<Station> stations() {
         List<Station> stations = new ArrayList<>();
         try {
@@ -33,6 +42,10 @@ public abstract class WaterTempApi {
         return stations;
     }
 
+    /**
+     * Get the station chronique
+     * @param station
+     */
     public static void fetchStationChronique(Station station) {
         try {
             WaterTempApiChroniqueTask chroniqueTask = new WaterTempApiChroniqueTask();

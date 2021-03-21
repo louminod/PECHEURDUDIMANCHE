@@ -40,14 +40,21 @@ public class Station implements Serializable {
     private double altitude;
     private LocalDate dateMajInfos;
 
+    // Data from others APIs
     private List<Chronique> chroniqueList;
     private List<EnvironmentalCondition> environmentalConditionList;
     private List<HydrometryObservation> hydrometryObservationList;
     private List<FishState> fishStateList;
 
+    // Specifics attributes
     private boolean loaded;
     private boolean favorite;
 
+    /**
+     * Custom constructor converting a Json to this class object
+     * @param json
+     * @throws JSONException
+     */
     public Station(JSONObject json) throws JSONException {
         this.codeStation = json.getString("code_station");
         this.libelleStation = json.getString("libelle_station");

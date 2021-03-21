@@ -31,6 +31,7 @@ public class WaterHydrometryObservationsTask extends AsyncTask<String, Void, Lis
             // Perform a request and format the result to be a correct json format
             String httpResult = Converters.readStream(in);
 
+            // Get the array from the Json and convert to list of HydrometryObservation
             JSONArray array = (new JSONObject(httpResult)).getJSONArray("data");
             for (int j = 0; j < array.length(); j++) {
                 JSONObject json = array.getJSONObject(j);

@@ -36,8 +36,6 @@ public class WaterTempApiChroniqueTask extends AsyncTask<String, Void, List<Chro
                 JSONObject jsonChronique = chroniques.getJSONObject(j);
                 chroniqueList.add(new Chronique(jsonChronique));
             }
-
-            // Log.i("JSON", result.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
-public class Adresse implements Serializable {
+public class Address implements Serializable {
     private String label;
     private String housenumber;
     private String name;
@@ -17,7 +17,12 @@ public class Adresse implements Serializable {
     private String context;
     private String street;
 
-    public Adresse(JSONObject json) throws JSONException {
+    /**
+     * Custom constructor converting a Json to this class object
+     * @param json
+     * @throws JSONException
+     */
+    public Address(JSONObject json) throws JSONException {
         this.label = json.isNull("label") ? null : json.getString("label");
         this.housenumber = json.isNull("housenumber") ? null : json.getString("housenumber");
         this.name = json.isNull("name") ? null : json.getString("name");

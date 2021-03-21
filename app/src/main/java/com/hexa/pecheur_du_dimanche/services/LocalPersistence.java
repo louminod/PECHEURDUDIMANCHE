@@ -21,14 +21,22 @@ import java.util.List;
  */
 public class LocalPersistence {
 
+    // The path of the persistence file
     private static final String STATIONS_PATH = "stations";
 
-
+    /**
+     * Save a station to the persistence.
+     * @param context
+     * @param station
+     */
     public static void saveStation(Context context, Station station) {
         ObjectOutputStream objectOut = null;
         try {
+            // Get the existing saved stations and add the new one
             List<Station> stations = getStations(context);
             stations.add(station);
+
+            // Write the data
             FileOutputStream fos = context.openFileOutput(STATIONS_PATH, Context.MODE_PRIVATE);
             ObjectOutputStream os = new ObjectOutputStream(fos);
             os.writeObject(stations);
@@ -47,9 +55,15 @@ public class LocalPersistence {
         }
     }
 
+    /**
+     * Retrieve a stations from the persistence
+     * @param context
+     * @param station
+     */
     public static void unsaveStation(Context context, Station station) {
         ObjectOutputStream objectOut = null;
         try {
+            // Get the stations and delete the station
             List<Station> stations = getStations(context);
             List<Station> newStations = new ArrayList<>();
             for (Station s : stations) {
@@ -57,6 +71,8 @@ public class LocalPersistence {
                     newStations.add(s);
                 }
             }
+
+            // Save the data
             FileOutputStream fos = context.openFileOutput(STATIONS_PATH, Context.MODE_PRIVATE);
             ObjectOutputStream os = new ObjectOutputStream(fos);
             os.writeObject(newStations);
@@ -76,7 +92,11 @@ public class LocalPersistence {
         Log.i("LocalPersistence", "Object saved !");
     }
 
-
+    /**
+     * Get all the saved stations
+     * @param context
+     * @return
+     */
     public static List<Station> getStations(Context context) {
 
         ObjectInputStream objectIn = null;
